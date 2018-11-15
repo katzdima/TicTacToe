@@ -17,6 +17,7 @@ export class GameComponent implements OnInit {
   turn = 'x';
   currentId:string;
   currentCellNumber:number;
+  win:boolean;
   constructor() { }
 
   ngOnInit() {
@@ -35,8 +36,8 @@ export class GameComponent implements OnInit {
     if(this.currentElemnt.children[0].src !== ("http://localhost:4200/" + this.backgroundPath)){
       return;
     }
-    console.log("current target id",this.currentElemnt.attributes.id);
-    console.log("current target ",this.currentElemnt.children[0].src);
+    //console.log("current target id",this.currentElemnt.attributes.id);
+    //console.log("current target ",this.currentElemnt.children[0].src);
 
     this.currentId = this.currentElemnt.attributes.id.value;
     this.currentCellNumber = parseInt(this.currentId.substring(4));
@@ -60,19 +61,35 @@ export class GameComponent implements OnInit {
   }
 
   winCheck(){
-    console.log('winCheck');
-    if(this.cellArr[0][0]==='x' && this.cellArr[0][1]==='x' && this.cellArr[0][2]==='x'){
-      console.log('X win');
-    }
+    this.win = this.winValid();
+    console.log("win",this.win);
     return;
   }
-  // function identical(array) {
-  //   for(var i = 0; i < array.length - 1; i++) {
-  //       if(array[i] !== array[i+1]) {
-  //           return false;
-  //       }
-  //   }
-  //   return true;
-  // }
 
+  winValid(){
+    let check:boolean = false;
+
+    //rows
+    check = this.winValidHelper(...this.cellArr[0]);
+    if(check){return check;}
+    check = this.winValidHelper(...this.cellArr[1]);
+    if(check){return check;}
+    check = this.winValidHelper(...this.cellArr[2]);
+    if(check){return check;}
+    //colums
+    check = this.winValidHelper(...this.cellArr.map(x => x[0]));
+    if(check){return check;}
+    check = this.winValidHelper(...this.cellArr.map(x => x[1]));
+    if(check){return check;}
+    check = this.winValidHelper(...this.cellArr.map(x => x[2]));
+    if(check){return check;}
+    //diagonal
+    check = this.winValidHelper(this.cellArr[0][0],this.cellArr[1][1],this.cellArr[2][2]);
+    if(check){return check;}
+    check = this.winValidHelper(this.cellArr[2][0],this.cellArr[1][1],this.cellArr[0][2]);
+    if(check){return check;}
+
+    return check;
+  }
+  winValidHelper(a?: string, b?: string, c?: string){ return a === b && a===c && b===c && a!=='default';}
 }
